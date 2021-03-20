@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href="/">Вернуться на главную</a>
+    <ul>
+        {{range .List}}
+        <li class="user">
+            <div><b>ID:       {{.ID}} </b></div>
+            <div><b>Name:     {{.Name}} </b></div>
+            <div><b>Password: ***** </b></div>
+            <div><b>Access: 
+                {{if .Access}}<span style="color: green;">Access</span>
+                {{else}}<span style="color: red;">Denied</span>
+                <a href="/access/{{.ID}}" >Получить доступ</a>
+                {{end}}</b>
+            </div>
+        </li>
+        {{end}}
+    </ul>
+
+    
+</body>
+<style>
+    .user {
+        margin-bottom: 20px;
+    }
+</style>
+</html>
