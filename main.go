@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 	"text/template"
+
+	"github.com/gorilla/mux"
 )
 
 type User struct {
@@ -44,18 +46,19 @@ func infoHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func accHandler(w http.ResponseWriter, r *http.Request) {
-	id, _ := strconv.Atoi(r.URL.Path[len("/access/"):])
-	for _, val := range UList.List {
-		if val.ID == id {
-			UList.List[id-1].Access = true
-		}
+	if r.Method == "POST" {
+		vars := mux.Vars(r)
+		id, _ := strconv.Atoi(vars["id"])
+		UList.List[id-1].Access = true
+		http.Redirect(w, r, "/info", http.StatusMovedPermanently)
 	}
-	http.Redirect(w, r, "/info", http.StatusPermanentRedirect)
 }
 
 func main() {
-	http.HandleFunc("/", indexHandler)
-	http.HandleFunc("/info/", infoHandler)
-	http.HandleFunc("/access/", accHandler)
+	router := mux.NewRouter()
+	router.HandleFunc("/info", infoHandler)
+	router.HandleFunc("/access/{id}", accHandler).Methods("POST")
+	router.HandleFunc("/", indexHandler)
+	http.Handle("/", router)
 	log.Fatal(http.ListenAndServe(":8081", nil))
 }
